@@ -1,11 +1,22 @@
 package com.xdrive.profilemanager.rule;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.xdrive.profilemanager.location.Cell;
 
 public class CellLocationRule implements LocationRule {
-	private Cell[] cells;
+	private Set<Cell> cells = new HashSet();
+
+	public Set<Cell> getCells() {
+		return cells;
+	}
+
+	public void setCells(Set<Cell> cells) {
+		this.cells = cells;
+	}
 
 	public void addCell(Cell cell) {
-		// @TODO: add implementation
+		cells.add(cell);
 	}
 }
