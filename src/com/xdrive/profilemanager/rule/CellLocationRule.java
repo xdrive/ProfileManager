@@ -8,4 +8,9 @@ public class CellLocationRule implements LocationRule {
 	public void addCell(Cell cell) {
 		// @TODO: add implementation
 	}
+	
+	public boolean checkRule() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
