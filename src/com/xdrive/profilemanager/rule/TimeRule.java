@@ -1,6 +1,8 @@
 package com.xdrive.profilemanager.rule;
 
+import java.util.Calendar;
 import java.util.Date;
+import android.text.format.Time;
 /**
  * Class implements Time based rules. Supports times, week days and 
  * both type rules
@@ -8,8 +10,8 @@ import java.util.Date;
  *
  */
 public class TimeRule implements Rule {	
-	private Date startTime;
-	private Date endTime;
+	private Time startTime;
+	private Time endTime;
 	
 	private byte weekDaysMask;
 	
@@ -22,19 +24,25 @@ public class TimeRule implements Rule {
 	public final static byte SUNDAY 	= 64;  // 01000000
 	public final static byte EVERYDAY 	= 127; // 01111111
 	
-	public void setStartTime(Date startTime) {
+	public TimeRule(Time startTime, Time endTime, byte weekDaysMask) {
+		this.startTime 		= startTime;
+		this.endTime		= endTime;
+		this.weekDaysMask	= weekDaysMask;
+	}
+	
+	public void setStartTime(Time startTime) {
 		this.startTime = startTime;
 	}
 	
-	public Date getStartTime() {
+	public Time getStartTime() {
 		return startTime;
 	}
 	
-	public void setEndTime(Date endTime) {
+	public void setEndTime(Time endTime) {
 		this.endTime = endTime;
 	}
 	
-	public Date getEndTime() {
+	public Time getEndTime() {
 		return endTime;
 	}
 	
@@ -46,4 +54,15 @@ public class TimeRule implements Rule {
 		return weekDaysMask;
 	}
 	
+	@Override
+	public boolean checkRule() {
+		// TODO review this code if the time is set to current but date is 
+		// set to 1 Jan 1970
+		Time currentTime = new Time();
+		if (currentTime.after(startTime) && currentTime.before(endTime)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

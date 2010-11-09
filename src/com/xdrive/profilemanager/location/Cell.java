@@ -1,5 +1,11 @@
 package com.xdrive.profilemanager.location;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.xdrive.profilemanager.rule.CellLocationRule;
+
+
 /**
  * Represents GSM cell object
  * @author Dmytro Kovalenko <dmytro.kovalenko@gmail.com>
@@ -23,6 +29,5 @@ public class Cell {
 	public void setLac(int lac) {
 		this.lac = lac;
 	}
-
-	
+		
 }
