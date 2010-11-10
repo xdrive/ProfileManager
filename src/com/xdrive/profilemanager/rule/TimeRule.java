@@ -56,18 +56,21 @@ public class TimeRule implements Rule {
 	
 	@Override
 	public boolean checkRule() {
-		Calendar currentTime, startTimeToday, endTimeToday, tmpCalendar;
-		startTimeToday = endTimeToday = currentTime = Calendar.getInstance();
+		// Converting current date&time to 1 Jan 1970 and current time.
+		// So for ex. 10 Nov 2010 22:59:12 will be converted to 
+		// 1 Jan 1970 22:59:12 we are then able to compare this time with our 
+		// rule start and end time
+		Calendar currentCalendar = Calendar.getInstance();
+		Calendar tempCalendar = Calendar.getInstance();
+		Date currentTime;
 		
-		tmpCalendar = Calendar.getInstance();
-		tmpCalendar.setTime(startTime);
-		startTimeToday.set(Calendar.HOUR, tmpCalendar.get(Calendar.HOUR)); 
-		startTimeToday.set(Calendar.MINUTE, tmpCalendar.get(Calendar.MINUTE));
+		currentCalendar.setTime(new Date(0));
+		currentCalendar.set(Calendar.HOUR_OF_DAY, 
+				tempCalendar.get(Calendar.HOUR_OF_DAY)); 
+		currentCalendar.set(Calendar.MINUTE, tempCalendar.get(Calendar.MINUTE));
 		
-		tmpCalendar.setTime(endTime);
-		endTimeToday.set(Calendar.HOUR, tmpCalendar.get(Calendar.HOUR));
-		endTimeToday.set(Calendar.MINUTE, tmpCalendar.get(Calendar.MINUTE));
-
+		currentTime = currentCalendar.getTime();
+		
 		if (currentTime.after(startTime) && currentTime.before(endTime)) {
 			return true;
 		} else {
