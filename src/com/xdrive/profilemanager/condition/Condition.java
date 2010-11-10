@@ -37,6 +37,8 @@ public class Condition {
 	}
 	
 	public void checkRules() {
-		// TODO implement check of all rules in collection rules
+		for(Rule r : rules) {
+			r.checkRule();
+		}
 	}
 }

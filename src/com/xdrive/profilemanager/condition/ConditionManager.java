@@ -23,6 +23,8 @@ public class ConditionManager {
 	}	
 	
 	public void checkRules() {
-		// TODO implement check for each condition in collection conditions		
+		for(Condition c : conditions) {
+			c.checkRules();
+		}
 	}
 }

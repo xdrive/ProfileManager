@@ -10,8 +10,8 @@ import android.text.format.Time;
  *
  */
 public class TimeRule implements Rule {	
-	private Time startTime;
-	private Time endTime;
+	private Date startTime;
+	private Date endTime;
 	
 	private byte weekDaysMask;
 	
@@ -24,25 +24,25 @@ public class TimeRule implements Rule {
 	public final static byte SUNDAY 	= 64;  // 01000000
 	public final static byte EVERYDAY 	= 127; // 01111111
 	
-	public TimeRule(Time startTime, Time endTime, byte weekDaysMask) {
+	public TimeRule(Date startTime, Date endTime, byte weekDaysMask) {
 		this.startTime 		= startTime;
 		this.endTime		= endTime;
 		this.weekDaysMask	= weekDaysMask;
 	}
 	
-	public void setStartTime(Time startTime) {
+	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
 	
-	public Time getStartTime() {
+	public Date getStartTime() {
 		return startTime;
 	}
 	
-	public void setEndTime(Time endTime) {
+	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
 	
-	public Time getEndTime() {
+	public Date getEndTime() {
 		return endTime;
 	}
 	
@@ -56,9 +56,18 @@ public class TimeRule implements Rule {
 	
 	@Override
 	public boolean checkRule() {
-		// TODO review this code if the time is set to current but date is 
-		// set to 1 Jan 1970
-		Time currentTime = new Time();
+		Calendar currentTime, startTimeToday, endTimeToday, tmpCalendar;
+		startTimeToday = endTimeToday = currentTime = Calendar.getInstance();
+		
+		tmpCalendar = Calendar.getInstance();
+		tmpCalendar.setTime(startTime);
+		startTimeToday.set(Calendar.HOUR, tmpCalendar.get(Calendar.HOUR)); 
+		startTimeToday.set(Calendar.MINUTE, tmpCalendar.get(Calendar.MINUTE));
+		
+		tmpCalendar.setTime(endTime);
+		endTimeToday.set(Calendar.HOUR, tmpCalendar.get(Calendar.HOUR));
+		endTimeToday.set(Calendar.MINUTE, tmpCalendar.get(Calendar.MINUTE));
+
 		if (currentTime.after(startTime) && currentTime.before(endTime)) {
 			return true;
 		} else {
