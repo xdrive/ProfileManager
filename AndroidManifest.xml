@@ -11,8 +11,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        
+        <uses-library android:name="android.test.runner" />
     </application>
 
-
+    <instrumentation android:label="All tests"
+        android:name="test.com.xdrive.profilemanager.ProfileManagerInstrumentationTestRunner"
+        android:targetPackage="com.xdrive.profilemanager" />
 </manifest> 
