@@ -62,6 +62,7 @@ public class TimeRule implements Rule {
 	 * 
 	 */
 	public boolean checkRule() {
+
 		if (this.checkWeekDay()) {
 			Calendar currentTime, startTimeToday, endTimeToday, tmpCalendar;
 			startTimeToday = endTimeToday = currentTime = Calendar.getInstance();
