@@ -15,24 +15,6 @@ public class ProfileManager extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);     
-        /*
-        Date tmpDate = new Date(0);
-        Calendar startCalendar = Calendar.getInstance();
-        startCalendar.setTime(tmpDate);
-        startCalendar.set(Calendar.HOUR, 11);
-        startCalendar.set(Calendar.MINUTE, 00);
-        
-        Calendar endCalendar = Calendar.getInstance();
-        endCalendar.setTime(tmpDate);
-        endCalendar.set(Calendar.HOUR, 23);
-        endCalendar.set(Calendar.HOUR, 59);
-        
-        byte weekDaysMask = TimeRule.EVERYDAY;
-        
-        Rule timeRule = new TimeRule(startCalendar.getTime(), endCalendar.getTime(), weekDaysMask);
-        TextView text = (TextView) findViewById(R.id.hello);
-        text.setText(((Boolean)timeRule.checkRule()).toString());
-        */
+        setContentView(R.layout.main);         
     }
 }

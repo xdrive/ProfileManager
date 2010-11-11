@@ -15,13 +15,13 @@ public class TimeRule implements Rule {
 	
 	private byte weekDaysMask;
 	
-	public final static byte MONDAY 	= 1;   // 00000001
-	public final static byte TUESDAY 	= 2;   // 00000010
-	public final static byte WEDNESDAY 	= 4;   // 00000100
-	public final static byte THURSDAY 	= 8;   // 00001000
-	public final static byte FRIDAY 	= 16;  // 00010000
-	public final static byte SATURDAY 	= 32;  // 00100000
-	public final static byte SUNDAY 	= 64;  // 01000000
+	public final static byte SUNDAY 	= 1;   // 00000001
+	public final static byte MONDAY 	= 2;   // 00000010
+	public final static byte TUESDAY 	= 4;   // 00000100
+	public final static byte WEDNESDAY 	= 8;   // 00001000
+	public final static byte THURSDAY 	= 16;  // 00010000
+	public final static byte FRIDAY 	= 32;  // 00100000
+	public final static byte SATURDAY 	= 64;  // 01000000
 	public final static byte EVERYDAY 	= 127; // 01111111
 	
 	public TimeRule(Date startTime, Date endTime, byte weekDaysMask) {
@@ -54,23 +54,47 @@ public class TimeRule implements Rule {
 		return weekDaysMask;
 	}
 	
+	
 	@Override
+	/**
+	 * Checks if current day of week and time fits rule
+	 * @return boolean true if current day of week and time fits the rule
+	 * 
+	 */
 	public boolean checkRule() {
-		Calendar currentTime, startTimeToday, endTimeToday, tmpCalendar;
-		startTimeToday = endTimeToday = currentTime = Calendar.getInstance();
-		
-		tmpCalendar = Calendar.getInstance();
-		tmpCalendar.setTime(startTime);
-		startTimeToday.set(Calendar.HOUR, tmpCalendar.get(Calendar.HOUR)); 
-		startTimeToday.set(Calendar.MINUTE, tmpCalendar.get(Calendar.MINUTE));
-		
-		tmpCalendar.setTime(endTime);
-		endTimeToday.set(Calendar.HOUR, tmpCalendar.get(Calendar.HOUR));
-		endTimeToday.set(Calendar.MINUTE, tmpCalendar.get(Calendar.MINUTE));
-
-		if (currentTime.after(startTime) && currentTime.before(endTime)) {
-			return true;
+		if (this.checkWeekDay()) {
+			Calendar currentTime, startTimeToday, endTimeToday, tmpCalendar;
+			startTimeToday = endTimeToday = currentTime = Calendar.getInstance();
+			
+			tmpCalendar = Calendar.getInstance();
+			tmpCalendar.setTime(startTime);
+			startTimeToday.set(Calendar.HOUR, tmpCalendar.get(Calendar.HOUR)); 
+			startTimeToday.set(Calendar.MINUTE, tmpCalendar.get(Calendar.MINUTE));
+			
+			tmpCalendar.setTime(endTime);
+			endTimeToday.set(Calendar.HOUR, tmpCalendar.get(Calendar.HOUR));
+			endTimeToday.set(Calendar.MINUTE, tmpCalendar.get(Calendar.MINUTE));
+	
+			if (currentTime.after(startTime) && currentTime.before(endTime)) {
+				return true;
+			} else {
+				return false;
+			}
 		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Checks if current week day is included to the rule's weekDaysMask
+	 * @return boolean true if current week day is in mask
+	 */
+	private boolean checkWeekDay() {
+		int currentWeekDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+		byte currentWeekDayMask = (byte) (TimeRule.SUNDAY << (currentWeekDay - 1));
+		if ((currentWeekDayMask & this.weekDaysMask) != 0) {
+			return true;
+		} else { 
 			return false;
 		}
 	}
