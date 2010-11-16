@@ -2,6 +2,10 @@ package com.xdrive.profilemanager.rule;
 
 import java.util.Calendar;
 import java.util.Date;
+
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 import android.text.format.Time;
 /**
  * Class implements Time based rules. Supports times, week days and 
@@ -9,10 +13,15 @@ import android.text.format.Time;
  * @author Dmytro Kovalenko <dmytro.kovalenko@gmail.com>
  *
  */
-public class TimeRule implements Rule {	
+@DatabaseTable(tableName="time_rule")
+public class TimeRule implements Rule {
+	@DatabaseField(generatedId=true)
+	private Integer id;
+	@DatabaseField(columnName="start_time")
 	private Date startTime;
+	@DatabaseField(columnName="end_time")
 	private Date endTime;
-	
+	@DatabaseField(columnName="week_days_mask")
 	private byte weekDaysMask;
 	
 	public final static byte SUNDAY 	= 1;   // 00000001
@@ -23,6 +32,10 @@ public class TimeRule implements Rule {
 	public final static byte FRIDAY 	= 32;  // 00100000
 	public final static byte SATURDAY 	= 64;  // 01000000
 	public final static byte EVERYDAY 	= 127; // 01111111
+	
+	public TimeRule() {
+		// Empty arg constructore required for ORMLite
+	}
 	
 	public TimeRule(Date startTime, Date endTime, byte weekDaysMask) {
 		this.startTime 		= startTime;
@@ -54,13 +67,20 @@ public class TimeRule implements Rule {
 		return weekDaysMask;
 	}
 	
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	
-	@Override
 	/**
 	 * Checks if current day of week and time fits rule
 	 * @return boolean true if current day of week and time fits the rule
 	 * 
 	 */
+	@Override
 	public boolean checkRule() {
 		if (this.checkWeekDay()) {
 			// Converting current date&time to 1 Jan 1970 and current time.
