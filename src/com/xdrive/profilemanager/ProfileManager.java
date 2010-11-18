@@ -5,13 +5,16 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.android.apptools.OpenHelperManager.SqliteOpenHelperFactory;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
+import com.xdrive.profilemanager.condition.Condition;
 import com.xdrive.profilemanager.data.DatabaseHelper;
+import com.xdrive.profilemanager.rule.Rule;
 import com.xdrive.profilemanager.rule.TimeRule;
 
 import android.content.Context;
@@ -33,12 +36,18 @@ public class ProfileManager extends OrmLiteBaseActivity<DatabaseHelper> {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        doSomeDBStuff();
+        //insertSomeStuff();
+        showSomeStuff();
     }
     
-    private void doSomeDBStuff() {
+    private void insertSomeStuff() {
     	try {
-    		Dao<TimeRule, Object> timeRuleDAO = getHelper().getTimeRuleDAO();
+    		Dao<Condition, Integer> conditionDAO = getHelper().getConditionDAO();
+    		Dao<TimeRule, Integer> timeRuleDAO = getHelper().getTimeRuleDAO();
+    		
+    		Condition condition = new Condition();
+    		condition.setName("Test Condition");
+    		conditionDAO.create(condition);
     		
     		Date tmpDate = new Date(0);
             Calendar startCalendar = Calendar.getInstance();
@@ -58,26 +67,47 @@ public class ProfileManager extends OrmLiteBaseActivity<DatabaseHelper> {
             
             TimeRule timeRule = new TimeRule(startCalendar.getTime(), 
             		endCalendar.getTime(),
-            		weekDaysMask);
-            //timeRuleDAO.create(timeRule);
+            		weekDaysMask,
+            		condition.getId());
+            timeRuleDAO.create(timeRule);
+
+    	}  catch (SQLException e) {
+    		Log.e(ProfileManager.class.getSimpleName(), "Database error");
+		}
+    }
+    
+    private void showSomeStuff() {    	
+    	try {
+    		Dao<Condition, Integer> conditionDAO = getHelper().getConditionDAO();
+            List<Condition> list = conditionDAO.queryForAll();
+            TimeRule timeRule = null;
             
-            List<TimeRule> list = timeRuleDAO.queryForAll();
             StringBuilder sb = new StringBuilder();
 			sb.append("got ").append(list.size()).append(" entries").append("\n");
 
 			SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-			int i = 0;
 			// if we already have items in the database
-			for(TimeRule simple : list) {
+			for(Condition cond : list) {
+				Set<Rule> rules = getHelper().getConditionRules(cond);
 				// output the first one				 
 				sb.append("--------------------------------\n");
-				sb.append("[").append(i).append("] = ").append(simple.toString()).append("\n");
-				sb.append("Start time: ")
-					.append(format.format(simple.getStartTime()))
-					.append(", end time:")
-					.append(format.format(simple.getEndTime())).append("\n");
-				sb.append("--------------------------------\n");
-				i++;
+				//sb.append("[").append(i).append("] = ").append(cond.toString()).append("\n");
+				sb.append("Condition name: "). append(cond.getName()).append("\n");
+				sb.append("Rules: \n");
+				int i = 0;
+				for(Rule condRule : rules) {
+					sb.append(condRule.getClass().getSimpleName()).append("\n");
+					if (condRule instanceof TimeRule) {
+						timeRule = (TimeRule) condRule;
+						sb.append("Start time: ")
+							.append(format.format(timeRule.getStartTime()))
+							.append(", end time:")
+							.append(format.format(timeRule.getEndTime())).append("\n");
+						
+					}
+					sb.append("--------------------------------\n");
+					i++;
+				}
 			}
 			TextView tv = (TextView) findViewById(R.id.hello);
 			tv.setText(sb);

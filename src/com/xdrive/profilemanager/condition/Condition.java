@@ -3,6 +3,8 @@ package com.xdrive.profilemanager.condition;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import com.xdrive.profilemanager.profile.Profile;
 import com.xdrive.profilemanager.rule.Rule;
 
@@ -12,10 +14,23 @@ import com.xdrive.profilemanager.rule.Rule;
  * @author Dmytro_Kovalenko <dmytro.kovalenko@gmail.com>
  *
  */
+@DatabaseTable(tableName = "condition")
 public class Condition {
+	@DatabaseField(generatedId = true)
+	private Integer id;
+	@DatabaseField
+	private String name;
 	private Profile profile;
 	private Set<Rule> rules = new HashSet<Rule>();
 	
+	public Condition() {
+		// Required for ORMLite
+	}
+	
+	public Integer getId() {
+		return id;
+	}
+
 	public Profile getProfile() {
 		return profile;
 	}
@@ -36,6 +51,15 @@ public class Condition {
 		this.rules.add(rule);
 	}
 	
+		
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public void checkRules() {
 		for(Rule r : rules) {
 			r.checkRule();

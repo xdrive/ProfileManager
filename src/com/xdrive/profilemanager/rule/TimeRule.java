@@ -6,7 +6,6 @@ import java.util.Date;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import android.text.format.Time;
 /**
  * Class implements Time based rules. Supports times, week days and 
  * both type rules
@@ -17,12 +16,14 @@ import android.text.format.Time;
 public class TimeRule implements Rule {
 	@DatabaseField(generatedId=true)
 	private Integer id;
-	@DatabaseField(columnName="start_time")
+	@DatabaseField(columnName = "start_time")
 	private Date startTime;
-	@DatabaseField(columnName="end_time")
+	@DatabaseField(columnName = "end_time")
 	private Date endTime;
-	@DatabaseField(columnName="week_days_mask")
+	@DatabaseField(columnName = "week_days_mask")
 	private byte weekDaysMask;
+	@DatabaseField(columnName = "condition_id", canBeNull = false)
+	private Integer conditionId;
 	
 	public final static byte SUNDAY 	= 1;   // 00000001
 	public final static byte MONDAY 	= 2;   // 00000010
@@ -33,14 +34,17 @@ public class TimeRule implements Rule {
 	public final static byte SATURDAY 	= 64;  // 01000000
 	public final static byte EVERYDAY 	= 127; // 01111111
 	
+	public final static String CONDITION_ID_FIELD = "condition_id";
+	
 	public TimeRule() {
 		// Empty arg constructore required for ORMLite
 	}
 	
-	public TimeRule(Date startTime, Date endTime, byte weekDaysMask) {
+	public TimeRule(Date startTime, Date endTime, byte weekDaysMask, Integer conditionId) {
 		this.startTime 		= startTime;
 		this.endTime		= endTime;
 		this.weekDaysMask	= weekDaysMask;
+		this.conditionId	= conditionId;
 	}
 	
 	public void setStartTime(Date startTime) {
@@ -75,6 +79,14 @@ public class TimeRule implements Rule {
 		this.id = id;
 	}
 	
+	public Integer getConditionId() {
+		return conditionId;
+	}
+
+	public void setConditionId(Integer conditionId) {
+		this.conditionId = conditionId;
+	}
+
 	/**
 	 * Checks if current day of week and time fits rule
 	 * @return boolean true if current day of week and time fits the rule

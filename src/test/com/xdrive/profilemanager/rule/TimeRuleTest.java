@@ -30,7 +30,7 @@ public class TimeRuleTest extends TestCase {
         byte weekDaysMask = TimeRule.EVERYDAY;
         
         timeRule = new TimeRule(startCalendar.getTime(), endCalendar.getTime(), 
-        		weekDaysMask);
+        		weekDaysMask, null);
 		assertTrue(timeRule.checkRule());
 		
 		// occurs every day, starts one minute after current time, 
@@ -46,7 +46,7 @@ public class TimeRuleTest extends TestCase {
         weekDaysMask = TimeRule.EVERYDAY;
         
         timeRule = new TimeRule(startCalendar.getTime(), endCalendar.getTime(), 
-        		weekDaysMask);
+        		weekDaysMask, null);
 		assertFalse(timeRule.checkRule());
 		
 		// occurs on every previous day, starts one minute before current time, 
@@ -67,7 +67,7 @@ public class TimeRuleTest extends TestCase {
         weekDaysMask = (byte) (1 << (currentWeekDay - 1));
                 
         timeRule = new TimeRule(startCalendar.getTime(), endCalendar.getTime(), 
-        		weekDaysMask);
+        		weekDaysMask, null);
 		assertFalse(timeRule.checkRule());
 	}
 
