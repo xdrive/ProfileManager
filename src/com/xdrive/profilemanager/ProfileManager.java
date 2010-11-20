@@ -13,6 +13,7 @@ import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.xdrive.profilemanager.condition.Condition;
+import com.xdrive.profilemanager.condition.ConditionManager;
 import com.xdrive.profilemanager.data.DatabaseHelper;
 import com.xdrive.profilemanager.rule.Rule;
 import com.xdrive.profilemanager.rule.TimeRule;
@@ -23,13 +24,6 @@ import android.util.Log;
 import android.widget.TextView;
 
 public class ProfileManager extends OrmLiteBaseActivity<DatabaseHelper> {
-	static {
-		OpenHelperManager.setOpenHelperFactory(new SqliteOpenHelperFactory() {
-			public OrmLiteSqliteOpenHelper getHelper(Context context) {
-				return new DatabaseHelper(context);
-			}
-		});
-	}
 	
     /** Called when the activity is first created. */
     @Override
@@ -76,43 +70,32 @@ public class ProfileManager extends OrmLiteBaseActivity<DatabaseHelper> {
 		}
     }
     
-    private void showSomeStuff() {    	
-    	try {
-    		Dao<Condition, Integer> conditionDAO = getHelper().getConditionDAO();
-            List<Condition> list = conditionDAO.queryForAll();
-            TimeRule timeRule = null;
-            
-            StringBuilder sb = new StringBuilder();
-			sb.append("got ").append(list.size()).append(" entries").append("\n");
-
-			SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-			// if we already have items in the database
-			for(Condition cond : list) {
-				Set<Rule> rules = getHelper().getConditionRules(cond);
-				// output the first one				 
-				sb.append("--------------------------------\n");
-				//sb.append("[").append(i).append("] = ").append(cond.toString()).append("\n");
-				sb.append("Condition name: "). append(cond.getName()).append("\n");
-				sb.append("Rules: \n");
-				int i = 0;
-				for(Rule condRule : rules) {
-					sb.append(condRule.getClass().getSimpleName()).append("\n");
-					if (condRule instanceof TimeRule) {
-						timeRule = (TimeRule) condRule;
-						sb.append("Start time: ")
-							.append(format.format(timeRule.getStartTime()))
-							.append(", end time:")
-							.append(format.format(timeRule.getEndTime())).append("\n");
-						
-					}
-					sb.append("--------------------------------\n");
-					i++;
-				}
+    private void showSomeStuff() {
+    	TimeRule timeRule = null;
+    	ConditionManager conditionManager = new ConditionManager(getHelper());
+    	conditionManager.fetchActiveConditions();
+    	StringBuilder sb = new StringBuilder();
+    	SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+    	
+    	for (Condition condition : conditionManager.getConditions()) {
+    		sb.append("--------------------------------\n");
+    		sb.append("Condition name: "). append(condition.getName()).append("\n");
+    		sb.append("Rules: \n");
+			int i = 0;
+			for(Rule rule : condition.getRules()) {
+				sb.append(rule.getClass().getSimpleName()).append("\n");
+				if (rule instanceof TimeRule) {
+					timeRule = (TimeRule) rule;
+					sb.append("Start time: ")
+					.append(format.format(timeRule.getStartTime()))
+					.append(", end time: ")
+					.append(format.format(timeRule.getEndTime())).append("\n");
+				}	
+				i++;
 			}
-			TextView tv = (TextView) findViewById(R.id.hello);
-			tv.setText(sb);
-    	} catch (SQLException e) {
-    		Log.e(ProfileManager.class.getSimpleName(), "Database error");
-		}
+			sb.append("--------------------------------\n");			
+    	}
+    	TextView tv = (TextView) findViewById(R.id.hello);
+		tv.setText(sb);    	
     }
 }

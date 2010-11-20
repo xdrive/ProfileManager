@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="open_helper_classname">com.xdrive.profilemanager.data.DatabaseHelper</string>
     <string name="hello">Hello World, ProfileManager!</string>
     <string name="app_name">ProfileManager</string>
 </resources>
