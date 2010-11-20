@@ -7,6 +7,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.xdrive.profilemanager.profile.Profile;
 import com.xdrive.profilemanager.rule.Rule;
+import com.xdrive.profilemanager.rule.TimeRule;
 
 /**
  * Implements condition. Controlls which profile should be turned on under 
@@ -22,6 +23,7 @@ public class Condition {
 	private String name;
 	private Profile profile;
 	private Set<Rule> rules = new HashSet<Rule>();
+	private boolean isActive = false;
 	
 	public Condition() {
 		// Required for ORMLite
@@ -59,10 +61,33 @@ public class Condition {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public boolean isActive() {
+		return isActive;
+	}
 
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	/**
+	 * Checks all condition's rules and if they are true calls condition's 
+	 * profile activation logic 
+	 */
 	public void checkRules() {
+		boolean timeRulesActive = true;
+		boolean tmpStatus = false;
 		for(Rule r : rules) {
-			r.checkRule();
+			tmpStatus = r.checkRule();
+			if (r instanceof TimeRule && !tmpStatus) {
+				timeRulesActive = false;
+			}
+		}
+		if (timeRulesActive) {
+			isActive = true;
+			// TODO: Activate Condition's profile
+		} else {
+			isActive = false;
 		}
 	}
 }

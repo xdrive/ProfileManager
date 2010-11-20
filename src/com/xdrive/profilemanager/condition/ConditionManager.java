@@ -43,9 +43,7 @@ public class ConditionManager {
 			}
 		} catch (SQLException e) {
 			Log.e(ProfileManager.class.getSimpleName(), "Error fetching conditions");
-		}
-		
-		
+		}		
 	}
 	
 	public void checkRules() {

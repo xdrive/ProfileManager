@@ -1,7 +1,7 @@
 package com.xdrive.profilemanager.profile;
 
 /**
- * Class implements Profile. Holds deferent system settings like ringer voliume,
+ * Class implements Profile. Holds different system settings like ringer volume,
  * vibrating alert status and so on.
  * @author Dmytro Kovalenko <dmytro.kovalenko@gmail.com>
  */
