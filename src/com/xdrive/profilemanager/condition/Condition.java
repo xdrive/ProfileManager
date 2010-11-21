@@ -10,7 +10,7 @@ import com.xdrive.profilemanager.rule.Rule;
 import com.xdrive.profilemanager.rule.TimeRule;
 
 /**
- * Implements condition. Controlls which profile should be turned on under 
+ * Implements condition. Controls which profile should be turned on under 
  * what rule.
  * @author Dmytro_Kovalenko <dmytro.kovalenko@gmail.com>
  *

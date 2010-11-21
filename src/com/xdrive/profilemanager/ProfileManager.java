@@ -19,6 +19,7 @@ import com.xdrive.profilemanager.rule.Rule;
 import com.xdrive.profilemanager.rule.TimeRule;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -32,6 +33,14 @@ public class ProfileManager extends OrmLiteBaseActivity<DatabaseHelper> {
         setContentView(R.layout.main);
         //insertSomeStuff();
         showSomeStuff();
+        
+        AudioManager mAudio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        //mAudio.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                
+        mAudio.setStreamVolume(AudioManager.STREAM_RING, 10, AudioManager.FLAG_PLAY_SOUND);
+        Integer audioVolume = mAudio.getStreamVolume(AudioManager.STREAM_RING);
+        TextView tv = (TextView) findViewById(R.id.hello);
+		tv.append(audioVolume.toString());
     }
     
     private void insertSomeStuff() {
