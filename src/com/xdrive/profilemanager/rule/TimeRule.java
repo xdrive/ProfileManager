@@ -22,7 +22,7 @@ public class TimeRule implements Rule {
 	private Date endTime;
 	@DatabaseField(columnName = "week_days_mask")
 	private byte weekDaysMask;
-	@DatabaseField(columnName = "condition_id", canBeNull = false)
+	@DatabaseField(columnName = TimeRule.CONDITION_ID_FIELD, canBeNull = false)
 	private Integer conditionId;
 	
 	public final static byte SUNDAY 	= 1;   // 00000001

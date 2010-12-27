@@ -21,6 +21,7 @@ public class Condition {
 	private Integer id;
 	@DatabaseField
 	private String name;
+	@DatabaseField(canBeNull = false, foreign = true)
 	private Profile profile;
 	private Set<Rule> rules = new HashSet<Rule>();
 	private boolean isActive = false;
@@ -51,8 +52,7 @@ public class Condition {
 	
 	public void addRule(Rule rule) {
 		this.rules.add(rule);
-	}
-	
+	}	
 		
 	public String getName() {
 		return name;

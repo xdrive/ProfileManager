@@ -7,6 +7,8 @@ import java.util.Set;
 
 import com.xdrive.profilemanager.ProfileManager;
 import com.xdrive.profilemanager.data.DatabaseHelper;
+import com.xdrive.profilemanager.profile.Profile;
+import com.xdrive.profilemanager.profile.ProfileElement;
 import com.xdrive.profilemanager.rule.Rule;
 
 import android.util.Log;
@@ -40,7 +42,11 @@ public class ConditionManager {
 			for(Condition condition : conditions) {
 				Set<Rule> rules = helper.getConditionRules(condition);
 				condition.setRules(rules);
-			}
+				helper.getProfileDAO().refresh(condition.getProfile());
+				Profile profile = condition.getProfile();
+				Set<ProfileElement> elements = helper.getProfileElements(profile);
+				profile.setElements(elements);				
+			}			
 		} catch (SQLException e) {
 			Log.e(ProfileManager.class.getSimpleName(), "Error fetching conditions");
 		}		

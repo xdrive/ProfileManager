@@ -16,6 +16,8 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.xdrive.profilemanager.condition.Condition;
+import com.xdrive.profilemanager.profile.Profile;
+import com.xdrive.profilemanager.profile.ProfileElement;
 import com.xdrive.profilemanager.rule.Rule;
 import com.xdrive.profilemanager.rule.TimeRule;
 
@@ -23,13 +25,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// name of the database file for your application -- change to something appropriate for your app
 	private static final String DATABASE_NAME = "profileManager.db";
 	// any time you make changes to your database objects, you may have to increase the database version
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	
 	private final String LOG_TAG = getClass().getName(); 
 	
 	// all DAO objects we using in application
 	private Dao<TimeRule, Integer> timeRuleDAO = null;
 	private Dao<Condition, Integer> conditionDAO = null;
+	private Dao<Profile, Integer> profileDAO = null;
+	private Dao<ProfileElement, Integer> profileElementDAO = null;
 
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -45,6 +49,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			Log.i(DatabaseHelper.class.getSimpleName(), "creating database");
 			TableUtils.createTable(connectionSource, TimeRule.class);
 			TableUtils.createTable(connectionSource, Condition.class);
+			TableUtils.createTable(connectionSource, Profile.class);
+			TableUtils.createTable(connectionSource, ProfileElement.class);			
 		} catch(SQLException e) {
 			Log.e(LOG_TAG, "Can't create database", e);
 			throw new RuntimeException(e);
@@ -60,6 +66,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			Log.i(DatabaseHelper.class.getName(), "upgrading database");
 			TableUtils.dropTable(connectionSource, TimeRule.class, true);
 			TableUtils.dropTable(connectionSource, Condition.class, true);
+			TableUtils.dropTable(connectionSource, Profile.class, true);
+			TableUtils.dropTable(connectionSource, ProfileElement.class, true);
 			onCreate(db);
 		} catch (SQLException e) {
 			Log.e(LOG_TAG, "Can't drop databases", e);
@@ -90,8 +98,30 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	}
 	
 	/**
+	 * Returns the DAO for Profile class. It will create it or just give the cached
+	 * value.
+	 */
+	public Dao<Profile, Integer> getProfileDAO() throws SQLException {
+		if (profileDAO == null) {
+			profileDAO = BaseDaoImpl.createDao(getConnectionSource(), Profile.class);
+		}
+		return profileDAO;
+	}
+	
+	/**
+	 * Returns the DAO for ProfileElement class. It will create it or just give the cached
+	 * value.
+	 */
+	public Dao<ProfileElement, Integer> getProfileElementDAO() throws SQLException {
+		if (profileElementDAO == null) {
+			profileElementDAO = BaseDaoImpl.createDao(getConnectionSource(), ProfileElement.class);
+		}
+		return profileElementDAO;
+	}
+	
+	/**
 	 * Fetches all rules from DB that have the same value of condition_id 
-	 * DB field that the passed Condition object's id property 
+	 * DB field with the passed Condition object's id property 
 	 * @param Condition condition Condition for which rules should be fetched
 	 * @return Set<Rule> set of rules for passed Condition
 	 */
@@ -108,6 +138,26 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		}
 		return rules;
 	}
+	
+	/**
+	 * Fetches all profile elements from DB that have the same value of 
+	 * profile_id DB field with the passed Profile object's id property 
+	 * @param Profile profile Profile for which elements should be fetched
+	 * @return Set<ProfileElement> set of elements for passed Profile
+	 */
+	public Set<ProfileElement> getProfileElements(Profile profile) {
+		Set<ProfileElement> elements = null;
+		if (profile != null) {
+			try {
+				QueryBuilder<ProfileElement, Integer> builder = this.getProfileElementDAO().queryBuilder();
+				builder.where().eq(ProfileElement.PROFILE_ID_FIELD, profile.getId());
+				elements = new HashSet<ProfileElement>(getProfileElementDAO().query(builder.prepare()));
+			} catch (SQLException e) {
+				Log.e(LOG_TAG, "Can't select profile elements. Database error");
+			}
+		}
+		return elements;
+	}
 		
 	/**
 	 * Close the database connections and clear any cached DAOs.
@@ -115,6 +165,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	@Override
 	public void close() {
 		super.close();
-		timeRuleDAO = null;
+		timeRuleDAO 		= null;
+		conditionDAO 		= null;
+		profileDAO 			= null;
+		profileElementDAO 	= null;
 	}
 }

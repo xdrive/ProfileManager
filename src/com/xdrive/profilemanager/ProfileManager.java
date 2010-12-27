@@ -15,6 +15,8 @@ import com.j256.ormlite.dao.Dao;
 import com.xdrive.profilemanager.condition.Condition;
 import com.xdrive.profilemanager.condition.ConditionManager;
 import com.xdrive.profilemanager.data.DatabaseHelper;
+import com.xdrive.profilemanager.profile.Profile;
+import com.xdrive.profilemanager.profile.ProfileElement;
 import com.xdrive.profilemanager.rule.Rule;
 import com.xdrive.profilemanager.rule.TimeRule;
 
@@ -33,7 +35,7 @@ public class ProfileManager extends OrmLiteBaseActivity<DatabaseHelper> {
         setContentView(R.layout.main);
         //insertSomeStuff();
         showSomeStuff();
-        
+        /*
         AudioManager mAudio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         //mAudio.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                 
@@ -41,17 +43,34 @@ public class ProfileManager extends OrmLiteBaseActivity<DatabaseHelper> {
         Integer audioVolume = mAudio.getStreamVolume(AudioManager.STREAM_RING);
         TextView tv = (TextView) findViewById(R.id.hello);
 		tv.append(audioVolume.toString());
+		*/
     }
     
     private void insertSomeStuff() {
     	try {
     		Dao<Condition, Integer> conditionDAO = getHelper().getConditionDAO();
     		Dao<TimeRule, Integer> timeRuleDAO = getHelper().getTimeRuleDAO();
+    		Dao<Profile, Integer> profileDAO = getHelper().getProfileDAO();
+    		Dao<ProfileElement, Integer> profileElementDAO = getHelper().getProfileElementDAO();
     		
+    		// Create Profile
+    		Profile profile = new Profile("Test Profile");
+            profileDAO.create(profile);
+            
+            // Create Profile Element
+            ProfileElement profileElement = new ProfileElement(
+            		ProfileElement.VOLUME_SETTING,
+            		"5",
+            		profile.getId());
+            profileElementDAO.create(profileElement);
+    		
+            // Create Condition
     		Condition condition = new Condition();
     		condition.setName("Test Condition");
+    		condition.setProfile(profile);
     		conditionDAO.create(condition);
     		
+    		// Create Time Rule(as condition rule)
     		Date tmpDate = new Date(0);
             Calendar startCalendar = Calendar.getInstance();
             int currentHour = startCalendar.get(Calendar.HOUR_OF_DAY);
@@ -72,8 +91,8 @@ public class ProfileManager extends OrmLiteBaseActivity<DatabaseHelper> {
             		endCalendar.getTime(),
             		weekDaysMask,
             		condition.getId());
-            timeRuleDAO.create(timeRule);
-
+            timeRuleDAO.create(timeRule);            
+            
     	}  catch (SQLException e) {
     		Log.e(ProfileManager.class.getSimpleName(), "Database error");
 		}
@@ -101,6 +120,14 @@ public class ProfileManager extends OrmLiteBaseActivity<DatabaseHelper> {
 					.append(format.format(timeRule.getEndTime())).append("\n");
 				}	
 				i++;
+			}
+			sb.append("Profile: \n");
+			Profile profile = condition.getProfile();
+			sb.append(profile.getName()).append("\n");
+			for(ProfileElement element : profile.getElements()) {
+				sb.append("type: ").append(element.getElementType())
+					.append(", value: ").append(element.getElementValue())
+					.append("\n");
 			}
 			sb.append("--------------------------------\n");			
     	}

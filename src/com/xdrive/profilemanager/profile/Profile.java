@@ -1,5 +1,8 @@
 package com.xdrive.profilemanager.profile;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -10,26 +13,38 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "profile")
 public class Profile {
-	@DatabaseField(columnName = "ringer_volume")
-	private byte ringerVolume;
-	@DatabaseField(columnName = "vibrator")
-	private boolean vibratingAlert;
+	@DatabaseField(generatedId=true)
+	private Integer id;
+	@DatabaseField
+	private String name;
+	Set<ProfileElement> elements = new HashSet<ProfileElement>();
 	
 	public Profile() {
 		// Empty args constructor required by ORMLite 
-	}
-	
-	public byte getRingerVolume() {
-		return ringerVolume;
-	}
-	public void setRingerVolume(byte ringerVolume) {
-		this.ringerVolume = ringerVolume;
-	}
-	public boolean isVibratingAlert() {
-		return vibratingAlert;
-	}
-	public void setVibratingAlert(boolean vibratingAlert) {
-		this.vibratingAlert = vibratingAlert;
 	}	
 	
+	public Profile(String name) {
+		this.name = name;
+	}
+	
+	public Integer getId() {
+		return id;
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Set<ProfileElement> getElements() {
+		return elements;
+	}
+
+	public void setElements(Set<ProfileElement> elements) {
+		this.elements = elements;
+	}
+
 }
